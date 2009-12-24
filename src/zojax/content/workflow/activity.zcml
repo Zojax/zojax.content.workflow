@@ -1,0 +1,20 @@
+<configure
+   xmlns="http://namespaces.zope.org/zope"
+   xmlns:zcml="http://namespaces.zope.org/zcml"
+   zcml:condition="installed zojax.content.activity"
+   i18n_domain="zojax.content.workflow">
+
+  <class class=".activity.WorkflowActivityRecord">
+    <require
+       permission="zope.Public"
+       interface=".interfaces.IWorkflowActivityRecord
+		  zojax.activity.interfaces.IActivityRecord" />
+  </class>
+
+  <utility
+     name="workflow"
+     factory=".activity.WorkflowActivityRecordDescription" />
+
+  <subscriber handler=".activity.stateChangedHandler" />
+
+</configure>

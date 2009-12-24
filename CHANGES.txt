@@ -1,0 +1,26 @@
+=======
+CHANGES
+=======
+
+0.2.2 (Unreleased)
+------------------
+
+
+0.2.1 (2009-09-10)
+------------------
+
+- Update workflow form style
+
+- Fixed using 'zojax:workflow' in product
+
+
+0.2.0 (2009-08-12)
+------------------
+
+- Update test for chameleon enabled setup
+
+
+0.1.0 (2009-06-23)
+------------------
+
+- Initial release.

@@ -1,0 +1,68 @@
+<configure
+   xmlns="http://namespaces.zope.org/zope"
+   xmlns:zcml="http://namespaces.zope.org/zcml"
+   xmlns:zojax="http://namespaces.zope.org/zojax"
+   xmlns:browser="http://namespaces.zope.org/browser"
+   i18n_domain="zojax.content.workflow">
+
+  <!-- configlet -->
+  <zojax:pagelet
+     name="index.html"
+     for="..interfaces.IWorkflowConfiglet"
+     class=".configlet.ConfigletView"
+     template="configlet.pt" />
+
+  <adapter
+     trusted="true"
+     factory=".configlet.ConfigletPublisher"
+     permission="zojax.Configure" />
+
+  <!-- content workflow -->
+  <class class=".workflow.ContentWorkflow">
+    <implements interface="zojax.content.type.interfaces.IItem" />
+
+    <require
+       permission="zojax.Configure"
+       set_schema=".interfaces.IContentWorkflow"
+       interface=".interfaces.IContentWorkflow
+		  zojax.content.type.interfaces.IItem"/>
+  </class>
+
+  <zojax:pagelet
+     name="index.html"
+     for=".interfaces.IContentWorkflow"
+     class=".workflow.EditContentWorkflow"
+     permission="zojax.Configure" />
+
+  <utility
+     name="zojax.content.workflow.contentworkflows"
+     provides="zope.schema.interfaces.IVocabularyFactory"
+     component=".workflow.contentWorkflows" />
+
+  <!-- edit content step -->
+  <zojax:pagelet
+     name="workflow"
+     title="Workflow"
+     type="wizard.step"
+     for="zojax.content.type.interfaces.IContent
+	  zojax.content.forms.interfaces.IEditContentWizard"
+     template="history.pt"
+     class=".history.WorkflowHistory"
+     weight="10000" />
+
+  <!-- icons -->
+  <browser:icon
+     name="zmi_icon"
+     file="icons/workflow.png"
+     for="..interfaces.IWorkflowConfiglet" />
+
+  <!-- content modified record view -->
+  <zcml:configure zcml:condition="installed zojax.content.activity">
+    <include package="zojax.content.activity" />
+    <zojax:pagelet
+       type="activity.record.description"
+       for="..interfaces.IWorkflowActivityRecord"
+       template="activity.pt" />
+  </zcml:configure>
+
+</configure>

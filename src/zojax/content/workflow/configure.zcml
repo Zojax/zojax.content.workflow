@@ -1,0 +1,46 @@
+<configure
+   xmlns="http://namespaces.zope.org/zope"
+   xmlns:zojax="http://namespaces.zope.org/zojax"
+   i18n_domain="zojax.content.workflow">
+
+  <!-- workflow -->
+  <adapter factory=".configlet.contentWorkflow" />
+
+  <!-- configlet -->
+  <zojax:configlet
+     title="Workflow"
+     name="content.workflow"
+     schema=".interfaces.IWorkflowConfiglet"
+     class=".configlet.WorkflowConfiglet"
+     description="This area allows you to configure content workflows."
+     permission="zojax.Configure">
+
+    <require
+       permission="zope.Public"
+       attributes="getWorkflow" />
+  </zojax:configlet>
+
+  <!-- catalog index -->
+  <utility
+     name="wfstate"
+     component=".index.workflowState"
+     provides="zojax.catalog.interfaces.ICatalogIndexFactory" />
+
+  <!-- vocabulary -->
+  <utility
+     name="content.workflow.states"
+     provides="zope.schema.interfaces.IVocabularyFactory"
+     component=".vocabulary.WorkflowStates" />
+
+  <utility
+     name="content.workflow.transitions"
+     provides="zope.schema.interfaces.IVocabularyFactory"
+     component=".vocabulary.WorkflowTransitions" />
+
+  <!-- workflow activity -->
+  <include file="activity.zcml" />
+
+  <!-- browser views -->
+  <include package=".browser" />
+
+</configure>
