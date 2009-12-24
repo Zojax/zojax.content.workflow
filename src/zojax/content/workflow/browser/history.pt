@@ -1,0 +1,75 @@
+<tal:block tal:define="state view/state;history view/history"
+	   i18n:domain="zojax.content.workflow">
+  <h2>
+    <tal:block i18n:translate="">Workflow history:</tal:block>
+    <tal:block tal:content="view/workflow/title" /></h2>
+  <p tal:content="structure view/workflow/description"></p>
+
+  <div class="z-form-fieldset">
+    <h2 i18n:translate="">Current state</h2>
+    <span tal:omit-tag="" i18n:translate="">This item is in
+      <b i18n:name="status" 
+	 tal:content="state/getState">Private</b> state.</span>
+    <br /><br />
+
+    <div tal:condition="history">
+      <h3><strong i18n:translate="">Reviewing history</strong></h3>
+      <br />
+      <div class="z-table-container">
+	<table class="z-table">
+	  <thead>
+	    <tr>
+	      <th i18n:translate="">State</th>
+	      <th i18n:translate="">Actor</th>
+	      <th i18n:translate="">Date</th>
+	      <th i18n:translate="">Comment</th>
+	    </tr>
+	  </thead>
+	  <tbody>
+	    <tr tal:repeat="item history"
+		tal:attributes="class python:repeat['item'].odd() and 'odd' or 'even'">
+	      <td><b tal:content="item/state"></b></td>
+	      <td tal:content="item/actor"></td>
+	      <td tal:content="structure formatter:fancyDatetime,full:item/time"></td>
+	      <td tal:define="comment item/comment|nothing"
+		  tal:content="structure comment">Comments</td>
+	    </tr>
+	  </tbody>
+	</table>
+      </div>
+    </div>
+    <div tal:condition="not:history"
+	 i18n:translate="">This item has not had any status changes.</div>
+  </div>
+  
+  <div class="z-form-fieldset" tal:condition="view/transitions">
+    <h2 i18n:translate="">Chage state</h2>
+    <ul class="z-listing">
+      <li tal:repeat="trans view/transitions">
+	<div class="z-listing-icon" tal:omit-tag="not:trans/description">
+	  <input type="radio" name="transition"
+		 tal:attributes="value trans/id" />
+	</div>
+	<div class="z-listing-details" tal:omit-tag="not:trans/description">
+	  <span tal:content="trans/title" />
+	  <tal:block condition="trans/description">
+	    <br />
+	    <tal:block content="trans/description" />
+	  </tal:block>
+	</div>
+      </li>
+    </ul>
+    <br />
+    <div class="z-form-field visualClear">
+      <label>Comment</label>
+      <br />
+      <textarea name="comment"></textarea>
+    </div>
+    <div class="z-form-controls">
+      <hr />
+      <input type="submit" class="z-form-button"
+	     value="Change" name="form.workflow.change" />
+    </div>
+  </div>
+
+</tal:block>

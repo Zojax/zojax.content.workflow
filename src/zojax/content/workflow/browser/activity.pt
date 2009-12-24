@@ -1,0 +1,3 @@
+<span class="discreet" i18n:domain="zojax.content.workflow"
+      i18n:translate="">Workflow state changed: </span>
+<span>"<tal:block content="context/source"/>" -> "<tal:block content="context/destination"/>"</span>

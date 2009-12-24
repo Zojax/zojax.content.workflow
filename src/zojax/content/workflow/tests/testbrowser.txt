@@ -1,0 +1,171 @@
+================
+Content workflow
+================
+
+    >>> from zope import interface, component
+    >>> from zope.component import getUtility
+    >>> from zope.app.component.hooks import setSite
+    >>> from zojax.workflow import interfaces
+    >>> from zojax.content.type.interfaces import IContentType
+    >>> from zojax.content.workflow.tests import workflow
+
+    >>> root = getRootFolder()
+    >>> setSite(root)
+
+    >>> from zojax.content.workflow.tests.tests import Document
+    >>> root['document'] = Document()
+
+default workflow
+
+    >>> wf = interfaces.IWorkflow(root['document'])
+    >>> wf is workflow.wf2
+    True
+
+
+Browser tests
+
+    >>> from zope.testbrowser.testing import Browser
+
+    >>> admin = Browser()
+    >>> admin.addHeader("Authorization", "Basic mgr:mgrpw")
+    >>> admin.handleErrors = False
+    >>> admin.open('http://localhost/settings/')
+    >>> admin.getLink('Workflow').click()
+
+    >>> print admin.contents
+    <html>
+    ...
+    ...<h1>Workflow</h1><div class="z-page-description">This area allows you to configure content workflows.</div><div class="z-form-standard">
+      <ul class="z-listing">
+        <li>
+          <div class="z-listing-icon">
+            <img src="..." alt="ContentType" width="16" height="16" border="0" />
+          </div>
+          <a href="content.document/">Document</a>
+          <div class="byline"></div>
+        </li>
+      </ul>
+    </div>...
+    ...
+    </html>
+
+Change workflow
+
+    >>> admin.getLink('Document').click()
+    >>> admin.getControl(name="form.widgets.workflow:list").value = ['default']
+    >>> admin.getControl(name="form.buttons.save").click()
+
+    >>> wf = interfaces.IWorkflow(root['document'])
+    >>> wf is workflow.wf
+    True
+
+Change workflow state
+
+    >>> admin.open('http://localhost/document/context.html')
+    >>> admin.getLink('Workflow').click()
+    >>> print admin.contents
+    <html>
+    ...
+    ...<h2>
+      Workflow history:
+      Default Workflow</h2>
+    <p></p>
+    <div class="z-form-fieldset">
+      <h2>Current state</h2>
+      This item is in
+      <b>Visible</b> state.
+      <br /><br />
+      <div>
+         <h3><strong>Reviewing history</strong></h3>
+         <br />
+         <div class="z-table-container">
+        <table class="z-table">
+          <thead>
+            <tr>
+              <th>State</th>
+              <th>Actor</th>
+              <th>Date</th>
+              <th>Comment</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="even">
+              <td><b>Visible</b></td>
+              <td>Manager</td>
+              <td>...</td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+    </div>    
+    <div class="z-form-fieldset">
+      <h2>Chage state</h2>
+      <ul class="z-listing">
+        <li>
+          <input type="radio" name="transition" value="private" />
+          <span>Private</span>
+        </li>
+      </ul>
+      <br />
+      <div class="z-form-field visualClear">
+        <label>Comment</label>
+        <br />
+        <textarea name="comment"></textarea>
+      </div>
+      <div class="z-form-controls">
+        <hr />
+        <input type="submit" class="z-form-button" value="Change" name="form.workflow.change" />
+      </div>
+    </div>
+    ...
+    </html>
+
+    >>> admin.getControl(name="transition").value = ['private']
+    >>> admin.getControl(name="form.workflow.change").click()
+
+    >>> state = interfaces.IWorkflowState(root['document'])
+    >>> state = state.getState()
+
+    >>> state
+    <zojax.workflow.state.State object ...>
+
+    >>> state.id
+    'private'
+
+Activity
+
+    >>> admin.getLink('Activity').click()
+    >>> print admin.contents
+    <html>
+    ...
+    <table class="z-table z-content-activity">
+      <thead>
+      <tr>
+        <th>Type</th> <th>Member</th> <th>Date</th> <th>Description</th>
+          </tr>
+     </thead>
+     <tbody>
+        <tr class="z-table-record odd">
+          <td class="ctb-activity-type">Workflow</td> <td class="ctb-author">
+            <div>
+              Manager
+            </div>
+          </td> <td class="ctb-activity-date">...</td> <td class="ctb-activity-desc"><span class="discreet">Workflow state changed: </span><span>"Visible" -> "Private"</span></td>
+        </tr> <tr class="z-table-record even">
+          <td class="ctb-activity-type">Workflow</td> <td class="ctb-author">
+            <div>
+              Manager
+            </div>
+          </td> <td class="ctb-activity-date">...</td> <td class="ctb-activity-desc"><span class="discreet">Workflow state changed: </span><span>"Unknown" -> "Visible"</span></td>
+        </tr> <tr class="z-table-record odd">
+          <td class="ctb-activity-type">Created</td> <td class="ctb-author">
+          </td> <td class="ctb-activity-date">...</td> <td class="ctb-activity-desc">...</td>
+        </tr>
+      </tbody>
+    </table>
+    ...
+    </html>
+    
+    >>> setSite(None)
