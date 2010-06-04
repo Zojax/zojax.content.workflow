@@ -161,6 +161,9 @@ Activity
           </td> <td class="ctb-activity-date">...</td> <td class="ctb-activity-desc"><span class="discreet">Workflow state changed: </span><span>"Unknown" -> "Visible"</span></td>
         </tr> <tr class="z-table-record odd">
           <td class="ctb-activity-type">Created</td> <td class="ctb-author">
+          <div>
+          Unknown
+          </div>
           </td> <td class="ctb-activity-date">...</td> <td class="ctb-activity-desc">...</td>
         </tr>
       </tbody>
