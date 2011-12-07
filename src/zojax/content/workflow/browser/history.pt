@@ -61,13 +61,14 @@
     </ul>
     <br />
     <div class="z-form-field visualClear">
-      <label>Comment</label>
+      <label i18n:translate="">Comment</label>
       <br />
       <textarea name="comment"></textarea>
     </div>
     <div class="z-form-controls">
       <hr />
       <input type="submit" class="z-form-button"
+             i18n:attributes="value"
 	     value="Change" name="form.workflow.change" />
     </div>
   </div>
